@@ -23,7 +23,8 @@ Center Surface 與 TIR Surface 的計算方法是相同，為了方便了解，�
 
 按照上述流程就可以得到 Center Surface 與 TIR Surface，此程式會把取樣的每一點的切線向量 (Tangent Vector) 與法向量 (Normal Vector) 標記出來，如下圖 : 
 
-<img src="https://github.com/YiChenLai/TIR_Lens/blob/master/pic/Ray_Tracing_of_TIR_Surface.png" width="200" height="200">
+<img src="https://github.com/YiChenLai/TIR_Lens/blob/master/pic/Ray_Tracing_of_TIR_Surface.png" width="300*3" height="200*3">
+
 ![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/Ray_Tracing_of_Center_Surface.png)
 
 同時，會將所有的取樣的點進行高階曲線的擬合 (Curve Fitting)，並且將擬合的曲線與取樣的點進行比較，計算兩者的差異值 (Error Value)，如下圖表示 : 
