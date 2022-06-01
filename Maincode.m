@@ -1,19 +1,43 @@
 %1. Enviroment Setting
 %    Clean up all the data in Workspace & information in Command Window.
-clc;clear
+clc;clear;close all
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %2. Parameter Setting
 %   According to condition of design, first setting up all the parameter we needed.
-source_radius = 5;
-n_glass = 1.5;
-n_air = 1;
-TIR_angle_correct = 0;
-R_angle_correct = 0;
+
+%   2-1 Lens Disign Parameter
+        source_radius          = 5;     % Distance between point source to inside incident surface
+        boundary_angle         = 60;    % Boundary angle between the light is propagating by TIR surface or center surface
+        distance_inside_to_TIR = 1;     % The minimize distance between inside surface to TIR surface
+        n_glass                = 1.5;   % TIR Lens material refraction index
+        n_air                  = 1;     % Propagation enviroment material refraction index
+        
+        TIR_sample_point       = boundary_angle+1;
+        Center_sample_point    = 201;
+        
+%   2-2 Fitting Torlerant
+        torlerant = 0.001;              % Curve fitting maximaum torlerant 
+    
+%   2-3 Propagation Simulation
+        Propagate_distance     = 10;    % The distance after transmitted the TIR lens
+
+%   2-4 Lens Propagation Adjustment
+%       The function of two parameter can change the TIR surface reflection angle
+%       & center surface refraction angle.
+        TIR_angle_correct      = 0;     % TIR surface reflection angle    = 0 + TIR_angle_correct degree
+        R_angle_correct        = 0;     % Center surface refraction angle = 0 + R_angle_correct   degree
+
+
+%   2-5 Save the Result Data
+        save_figure            = 0;     % Switch of save the picture ( 0 (NO) / 1 (YES) )
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %3. Refraction Angle Calculation
 %    3-1 Light Source to side incident surface
 %        Calculate each emission angle of the point source transmit to the side incident surface position coordinate.
-emission_angle_side = 0:0.5:60;
+emission_angle_side = linspace(0,boundary_angle,TIR_sample_point);%0:0.5:boundary_angle;
 s_i_s_p = zeros(2,numel(emission_angle_side)); % side_incident_surface_position
 s_i_s_p(1,:) = source_radius;
 s_i_s_p(2,:) = source_radius*tand(emission_angle_side);
@@ -28,7 +52,7 @@ refraction_angle_top = asind(n_air*sind(emission_angle_side)/n_glass);
 %4-1. TIR Surface Calculation
 %        So, we get the position on side incident surface and refraction angle. Next step, we are going to calculate TIR surface. 
 TIR_s_p = zeros(2,numel(emission_angle_side));
-surf_x = source_radius+1;
+surf_x = source_radius+distance_inside_to_TIR;
 
 dx = surf_x-source_radius;
 dy = dx*tand(refraction_angle_top(1));
@@ -57,15 +81,15 @@ end
 %4-2. Curve Fitting
 error_val = 1;
 powers = 0;
-while error_val > 0.001
+while error_val > torlerant
     powers = powers+1;
     f_TIRsurf = polyfit(TIR_s_p(1,:),TIR_s_p(2,:),powers);
     TIR_x = TIR_s_p(1,:);
     TIR_y = polyval(f_TIRsurf,TIR_x);
-    error_val = max(TIR_y-TIR_s_p(2,:))
+    error_val = max(TIR_y-TIR_s_p(2,:));
+    disp(['Polynomial Powers = ',num2str(powers),', TIR surface error value :',num2str(error_val)])
 end
 disp(['Polynomial of TIR Surface = ',num2str(f_TIRsurf)])
-disp(['Polynomial Powers = ',num2str(powers)])
 
 A = figure;
 plot(TIR_x,TIR_y,'linewidth',2)
@@ -134,9 +158,8 @@ title('Incident Angle vs Reflection Angle on TIR Surface')
 %%
 %5. Center Surface Desigin
 %5-1. Center Surface Calculation
-slice_num = 201;
-R_s_p = zeros(2,slice_num);
-R_s_p(1,:) = linspace(s_i_s_p(1,end),0,slice_num);
+R_s_p = zeros(2,Center_sample_point);
+R_s_p(1,:) = linspace(s_i_s_p(1,end),0,Center_sample_point);
 R_s_p(2,1) = s_i_s_p(2,end);
 
 angle = 90-emission_angle_side(end);
@@ -157,15 +180,15 @@ end
 %5-2. Curve Fitting
 error_val = 1;
 powers = 0;
-while error_val > 0.001
+while error_val > torlerant
     powers = powers+1;
     f_Rsurf = polyfit(R_s_p(1,:),R_s_p(2,:),powers);
     R_x = R_s_p(1,:);
     R_y = polyval(f_Rsurf,R_x);
-    error_val = max(R_y-R_s_p(2,:))
+    error_val = max(R_y-R_s_p(2,:));
+    disp(['Polynomial Powers = ',num2str(powers),', Center surface error value :',num2str(error_val)])
 end
 disp(['Polynomial of Center Curve = ',num2str(f_Rsurf)])
-disp(['Polynomial Powers = ',num2str(powers)])
 
 E = figure;
 plot(R_x,R_y,'linewidth',2)
@@ -224,13 +247,11 @@ title('Incident Angle vs Reflection Angle on Center Surface')
 %%
 %6. TIR Lens Ray Tracing
 %6-1. Ray Tracing
-Propagate_distance = 10;
-
 
 Data.TIR_ang = TIR_theta_2;
 Data.R_ang = R_theta_2;
-Data.area1_x = [zeros(1,numel(emission_angle_side)),zeros(1,slice_num);s_i_s_p(1,:),R_s_p(1,:)];
-Data.area1_y = [zeros(1,numel(emission_angle_side)),zeros(1,slice_num);s_i_s_p(2,:),R_s_p(2,:)];
+Data.area1_x = [zeros(1,numel(emission_angle_side)),zeros(1,Center_sample_point);s_i_s_p(1,:),R_s_p(1,:)];
+Data.area1_y = [zeros(1,numel(emission_angle_side)),zeros(1,Center_sample_point);s_i_s_p(2,:),R_s_p(2,:)];
 Data.area2_1_x = [s_i_s_p(1,:);TIR_s_p(1,:)];
 Data.area2_1_y = [s_i_s_p(2,:);TIR_s_p(2,:)];
 
@@ -329,7 +350,6 @@ title(['Surface Cut at Porpagated ',num2str(Propagate_distance),' Unit Distance'
 
 %%
 % Save Figure
-save_figure = 0;
 if save_figure == 1
     saveas(A,'TIR Surface Fitting Curve.png')
     saveas(B,'TIR Surface Fitting Curve Error Value.png')
