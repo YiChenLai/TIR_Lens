@@ -24,28 +24,31 @@ Center Surface 與 TIR Surface 的計算方法是相同，為了方便了解，�
 按照上述流程就可以得到 Center Surface 與 TIR Surface，此程式會把取樣的每一點的切線向量 (Tangent Vector) 與法向量 (Normal Vector) 標記出來，如下圖 : 
 
 ![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/Ray_Tracing_of_TIR_Surface.png)
-![image]()
+![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/Ray_Tracing_of_Center_Surface.png)
 
 同時，會將所有的取樣的點進行高階曲線的擬合 (Curve Fitting)，並且將擬合的曲線與取樣的點進行比較，計算兩者的差異值 (Error Value)，如下圖表示 : 
 
-![image]()
-![image]()
+![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/TIR_Surface_Fitting_Curve_Error_Value.png)
+![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/TIR_Surface_Fitting_Curve.png)
+
+![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/Center_Surface_Fitting_Curve_Error_Value.png)
+![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/Center_Surface_Fitting_Curve.png)
 
 在參數控制一欄有 torlerant = 0.001，代表擬合的曲線與取樣的的最大的差異不可大過 0.001 Unit。而 torlerant 是可以根據使用者調整，數值越小，擬合的曲線階數就會越高。程式會在 Matlab 的 Command Windows 顯示不同階數的 Error Value，並且會列出曲線函數的係數與常數，如下圖所示 : 
 
-![image]()
+![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/command_windows.png)
 
 之後會在對 Fitting 的曲線進行驗證，計算經過兩曲線 (Center Surface 與 TIR Surface) 的光線出射角度是否有垂直出射 TIR Lens，如下圖表示 : 
 
-![image]()
-![image]()
+![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/Incident_Angle_vs_Reflection_Angle_on_TIR_Surface.png)
+![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/Incident_Angle_vs_Reflection_Angle_on_Center_Surface.png)
 
 可以看到出射角度都非常接近 90 度 (z 軸方向)。(若想要更完美可以提高取樣點，以及減少 torlerant 值。)
 
 最後，在參數控制一欄有 Propagate_distance，是可以顯示出出射 TIR Lens 後，傳播 Propagate_distance 的距離之光追跡效果，並且會顯示該截面的分布，如下表示 : 
 
-![image]()
-![image]()
+![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/TIR_Lens_Ray_Tracing.png)
+![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/Surface_Cut_at_Porpagated_10_Unit_Distance.png)
 
 ---
 ## 結語
