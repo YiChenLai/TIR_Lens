@@ -7,23 +7,23 @@
 ## 介紹
 TIR Lens 設計可以分成兩個部分 : **中央準直表面 (Center Surface)**與**全反射表面 (TIR Surface)**。由於 TIR Lens 是二次光學元件，一般是安裝在發光二極體 (Light Emission Diode, LED) 上，使 LED 的光線準直。而 LED 本身就是一個具有高指向性的發光元件，因此在小光束角，TIR Lens 就以中央準直表面進行角度的修正，使原本發散的角度修正成平行光出射，剩下的大光束角就藉由全反射表面修正成平行光出射，如下圖 : 
 
-![image]()
+![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/How_TIR_Lens_works.png)
 
 在此先將之後說明時的名詞進行定義，下圖表示 : 
 
-![image]()
+![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/Intordution_of_TIR_lens.png)
 
 圖片中的名詞可以對到 maincode.m 的註解以及參數名詞，使用者可以參照設計需求來調整參數。程式參數控制一欄由下圖表示 : 
 
-![image]()
+![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/Parameter_setting.png)
 
 Center Surface 與 TIR Surface 的計算方法是相同，為了方便了解，我做了一個TIR Surface 的流程圖，如下圖 : 
 
-![image]()
+![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/flowchart.png)
 
 按照上述流程就可以得到 Center Surface 與 TIR Surface，此程式會把取樣的每一點的切線向量 (Tangent Vector) 與法向量 (Normal Vector) 標記出來，如下圖 : 
 
-![image]()
+![image](https://github.com/YiChenLai/TIR_Lens/blob/master/pic/Ray_Tracing_of_TIR_Surface.png)
 ![image]()
 
 同時，會將所有的取樣的點進行高階曲線的擬合 (Curve Fitting)，並且將擬合的曲線與取樣的點進行比較，計算兩者的差異值 (Error Value)，如下圖表示 : 
@@ -50,8 +50,3 @@ Center Surface 與 TIR Surface 的計算方法是相同，為了方便了解，�
 ---
 ## 結語
 此程式目前可以根據使用者的設計條件進行**點光源**的 TIR Lens 生成，也就是說，此 TIR Lens 是使用理想光源設計出來的，而實際上 LED 的發光晶片都是面光源，代表此程式生成出來的透鏡沒有辦法達到最好的效果。但是使用者可以根據此程式再自行搭配演算法來修正表面來達到更好的效果。
-
-
-
-
-
